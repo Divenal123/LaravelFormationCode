@@ -23,3 +23,4 @@ Route::resource('films', FilmController::class);
 //Route permettant la suppression non définitive d'un élement. Après avoir ajouté un champ qui va recevoir l'element
 Route::delete('films/force/{film', [filmcontroller::class, 'forceDestroy'])->name('films.force.destroy');
 Route::put('films/restore/{film', [filmcontroller::class, 'restore'])->name('films.restore');
+Route::get('category/{slug}/films', [filmcontroller::class, 'index'])->name('films.category');
