@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Film;
+use App\Http\Requests\Film as FilmRequest;
 
 class FilmController extends Controller
 {
@@ -17,7 +18,8 @@ class FilmController extends Controller
         //On va chercher tous les films avec la méthode all du modèle, on appelle la vue index en lui
         //transmettant les films
         //$films=Film::all();
-        $films=Film::paginate(10);
+        //$films=Film::paginate(6);
+        $films=Film::oldest('year')->paginate(6);
         return view('index', compact('films'));
     }
 
@@ -28,7 +30,7 @@ class FilmController extends Controller
      */
     public function create()
     {
-        //
+        return view('create');
     }
 
     /**
@@ -37,9 +39,10 @@ class FilmController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(FilmRequest $filmRequest)
     {
-        //
+        Film::create($filmRequest->all());
+        return redirect()->route('films.index')->with('info', 'Le film a bien été créé');
     }
 
     /**
@@ -59,9 +62,9 @@ class FilmController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Film $film)
     {
-        //
+        return view('edit', compact('film'));
     }
 
     /**
@@ -71,9 +74,10 @@ class FilmController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(FilmRequest $filmRequest, Film $film)
     {
-        //
+        $film->update($filmRequest->all());
+        return redirect()->route('films.index')->with('info', 'Le film a bien été modifié');
     }
 
     /**
@@ -85,6 +89,18 @@ class FilmController extends Controller
     public function destroy(Film $film)
     {
         $film->delete();
-        return back()->with('info', 'Le film a bien été supprimé de la base de données');
+        return back()->with('info', 'Le film a bien été mis dans la corbeille');
+    }
+
+    public function forceDestroy()
+    {
+        Film::withTrashed()->whereId('$id')->firstOrFail()->forceDelete();
+        return back()->with('info', 'Le film a bien été supprimé définitivement de la base de données');
+    }
+
+    public function restore($id)
+    {
+        Film::withTrashed()->whereId($id)->firstOrFail()->restore();
+        return back()->with('info', 'Le film a bien été restauré.');
     }
 }

@@ -1,4 +1,18 @@
 @extends('template')
+
+@section('css')
+    <style>
+        .card-footer{
+            justify-content: center;
+            align-items: center;
+            padding: 0.4em;
+        }
+        .is-info{
+            margin: 0.3em;
+        }
+    </style>
+@endsection
+
 @section('content')
     @if(session()->has('info'))
         <div class="notification is-success">
@@ -7,7 +21,7 @@
     @endif
     <div class="card">
         <header class="card-header">
-            <p class="card-header--title">Films</p>
+            <a class="button is-info" href="{{ route('films.create') }}">Créer un film</a>
         </header>
         <div class="card-content">
             <div class="content">
@@ -16,6 +30,7 @@
                         <tr>
                             <th>#</th>
                             <th>Titre</th>
+                            <th>Year</th>
                             <th></th>
                             <th></th>
                             <th></th>
@@ -26,6 +41,7 @@
                             <tr>
                                 <td> {{ $film->id }} </td>
                                 <td><strong>{{ $film->title }}</strong></td>
+                                <td><strong>{{ $film->year }}</strong></td>
                                 <td><a class="button is-primary" href="{{ route('films.show', $film->id) }}">Voir</a></td>
                                 <td><a class="button is-warning" href="{{ route('films.edit', $film->id) }}">Modifier</a></td>
                                 <td>
@@ -42,17 +58,10 @@
                 </table>
             </div>
         </div>
-        <footer class="card-footer">
+        <footer class="card-footer is-centered">
             {{ $films->links() }}
         </footer>
     </div>
 @endsection
-@section('css')
-    <style>
-        .card-footer{
-            justify-content: center;
-            align-items: center;
-            padding: 0.4em;
-        }
-    </style>
-@endsection
+
+
